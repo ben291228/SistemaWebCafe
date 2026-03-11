@@ -1,32 +1,69 @@
-import styles from './app.module.css'
-import Nav from './Components/Nav'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import { PrivateRoute, PublicRoute } from './components/auth/RouteGuard';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Catalog from './pages/Catalog';
+import Cart from './pages/Cart';
+import MyOrders from './pages/MyOrders';
+import Layout from './Components/Layout';
 
+import ProductDetail from './pages/ProductDetail';
 
 function App() {
-  
-
   return (
-    <>
-    <body>
-      <section>
-    <header>
-      <div>
-        <Nav/>
-      </div>
-    </header>
-      <div className={styles.TextBlock}>
-        <span className={styles.subtitle}>Bienvenido</span>
-        <div >
-          <h1 >Nosotros servimos el mejor cafe de la ciudad!</h1>
-        </div>
-        <span className={styles.info}>Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-          Autem numquam laboriosam aperiam eligendi pariatur sequi ducimus</span>
-        <button>Ordena ahora</button>
-      </div>
-      </section>
-    </body>
-    </>
-  )
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } />
+            <Route path="/register" element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            } />
+
+            {/* Protected Shop Routes */}
+            <Route path="/" element={
+              <PrivateRoute>
+                <Layout>
+                  <Catalog />
+                </Layout>
+              </PrivateRoute>
+            } />
+            <Route path="/product/:slug" element={
+              <PrivateRoute>
+                <Layout>
+                  <ProductDetail />
+                </Layout>
+              </PrivateRoute>
+            } />
+            <Route path="/cart" element={
+              <PrivateRoute>
+                <Layout>
+                  <Cart />
+                </Layout>
+              </PrivateRoute>
+            } />
+            <Route path="/orders" element={
+              <PrivateRoute>
+                <Layout>
+                  <MyOrders />
+                </Layout>
+              </PrivateRoute>
+            } />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
