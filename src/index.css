@@ -1,0 +1,13 @@
+:root{
+  --white: #FFF;
+}
+
+
+body{
+  font-family:'Playfair Display', bold;
+  background-image: url('/public/espresso-surrounded-by-scattered-coffee-beans-dark-surface\ 1.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #FFF;
+  font-size: 3.2 rem;
+}

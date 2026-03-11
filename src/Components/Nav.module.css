@@ -1,0 +1,28 @@
+.title{
+    text-align: left;
+    font-size: 2.5rem;
+}
+nav{
+    padding: 1rem;
+    display:flex;
+    margin-bottom: 6rem;
+    
+}
+ul{
+    margin: 0px;
+    align-items: center;
+    padding: 1rem;
+    padding-left: 30rem;
+}
+li{
+    list-style: none;
+    display: inline;
+    margin-right: 1.5rem;
+}
+
+a  {
+    font-family:'Poppins';
+    text-transform: uppercase;
+    color: white;
+}
+  
