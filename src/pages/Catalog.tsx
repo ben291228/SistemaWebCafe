@@ -117,7 +117,7 @@ const Catalog: React.FC = () => {
                 .catalog-header {
                     background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/public/espresso-surrounded-by-scattered-coffee-beans-dark-surface 1.png');
                     background-size: cover;
-                    background-position: center;
+                    background-position: center; 
                     padding: 100px 20px;
                     text-align: center;
                     border-radius: 0 0 40px 40px;

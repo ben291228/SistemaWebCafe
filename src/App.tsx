@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
-import { PrivateRoute, PublicRoute } from './components/auth/RouteGuard';
+import { PrivateRoute, PublicRoute } from './Components/auth/RouteGuard';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Catalog from './pages/Catalog';

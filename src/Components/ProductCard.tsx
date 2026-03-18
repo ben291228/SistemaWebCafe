@@ -3,42 +3,42 @@ import { useCart } from '../context/CartContext';
 import { Plus, Info } from 'lucide-react';
 
 interface ProductCardProps {
-    product: {
-        id: number;
-        name: string;
-        price: number;
-        image: string;
-        description: string;
-        category_name: string;
-    };
+  product: {
+    id: number | string;
+    name: string;
+    price: number;
+    image: string;
+    description: string;
+    category_name: string;
+  };
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-    const { addToCart } = useCart();
+  const { addToCart } = useCart();
 
-    return (
-        <div className="product-card">
-            <div className="product-image-container">
-                <img src={product.image || '/coffee-placeholder.png'} alt={product.name} className="product-image" />
-                <div className="product-overlay">
-                    <button className="icon-btn" title="Ver detalles">
-                        <Info size={20} />
-                    </button>
-                </div>
-            </div>
+  return (
+    <div className="product-card">
+      <div className="product-image-container">
+        <img src={product.image || '/coffee-placeholder.png'} alt={product.name} className="product-image" />
+        <div className="product-overlay">
+          <button className="icon-btn" title="Ver detalles">
+            <Info size={20} />
+          </button>
+        </div>
+      </div>
 
-            <div className="product-info">
-                <span className="product-category">{product.category_name}</span>
-                <h3 className="product-title">{product.name}</h3>
-                <p className="product-price">${product.price}</p>
+      <div className="product-info">
+        <span className="product-category">{product.category_name}</span>
+        <h3 className="product-title">{product.name}</h3>
+        <p className="product-price">${product.price}</p>
 
-                <button className="add-to-cart-btn" onClick={() => addToCart(product)}>
-                    <Plus size={18} />
-                    <span>Añadir al carrito</span>
-                </button>
-            </div>
+        <button className="add-to-cart-btn" onClick={() => addToCart(product)}>
+          <Plus size={18} />
+          <span>Añadir al carrito</span>
+        </button>
+      </div>
 
-            <style>{`
+      <style>{`
         .product-card {
            background: rgba(255, 255, 255, 0.03);
            backdrop-filter: blur(10px);
@@ -164,8 +164,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           box-shadow: 0 4px 15px rgba(212, 163, 115, 0.3);
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default ProductCard;

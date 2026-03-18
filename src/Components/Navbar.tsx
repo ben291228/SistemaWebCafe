@@ -5,48 +5,48 @@ import { Coffee, ShoppingBag, LogOut, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
-    const { user, logout } = useAuth();
-    const { cart } = useCart();
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const { cart } = useCart();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
-    return (
-        <nav className="navbar">
-            <div className="navbar-container">
-                <Link to="/" className="navbar-logo">
-                    <Coffee size={32} />
-                    <span>Sistema Web Café</span>
-                </Link>
+  return (
+    <nav className="navbar">
+      <div className="navbar-container">
+        <Link to="/" className="navbar-logo">
+          <Coffee size={32} />
+          <span>Sistema Web Café</span>
+        </Link>
 
-                <div className={`navbar-links ${isMenuOpen ? 'open' : ''}`}>
-                    <Link to="/" onClick={() => setIsMenuOpen(false)}>Catálogo</Link>
-                    <Link to="/orders" onClick={() => setIsMenuOpen(false)}>Mis Pedidos</Link>
-                </div>
+        <div className={`navbar-links ${isMenuOpen ? 'open' : ''}`}>
+          <Link to="/" onClick={() => setIsMenuOpen(false)}>Catálogo</Link>
+          <Link to="/orders" onClick={() => setIsMenuOpen(false)}>Mis Pedidos</Link>
+        </div>
 
-                <div className="navbar-actions">
-                    <Link to="/cart" className="cart-action">
-                        <ShoppingBag size={24} />
-                        {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                    </Link>
+        <div className="navbar-actions">
+          <Link to="/cart" className="cart-action">
+            <ShoppingBag size={24} />
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </Link>
 
-                    <div className="user-profile">
-                        <span className="username">{user?.username}</span>
-                        <button onClick={logout} className="logout-btn" title="Cerrar sesión">
-                            <LogOut size={20} />
-                        </button>
-                    </div>
+          <div className="user-profile">
+            <span className="username">{user?.username}</span>
+            <button onClick={logout} className="logout-btn" title="Cerrar sesión">
+              <LogOut size={20} />
+            </button>
+          </div>
 
-                    <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                        {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-                    </button>
-                </div>
-            </div>
+          <button className="menu-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+      </div>
 
-            <style>{`
+      <style>{`
         .navbar {
-          background: rgba(0, 0, 0, 0.3);
-          backdrop-filter: blur(20px);
+          background: transparent;
+          backdrop-filter: blur(1px);
           -webkit-backdrop-filter: blur(20px);
           border-bottom: 1px solid rgba(255, 255, 255, 0.1);
           position: sticky;
@@ -192,8 +192,8 @@ const Navbar: React.FC = () => {
           }
         }
       `}</style>
-        </nav>
-    );
+    </nav>
+  );
 };
 
 export default Navbar;
