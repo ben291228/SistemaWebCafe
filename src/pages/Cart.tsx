@@ -4,14 +4,50 @@ import { orderService } from '../services/productService';
 import {
   Trash2, Plus, Minus, CreditCard as PaymentIcon, ShoppingBag,
   ArrowLeft, CheckCircle, Truck, ShieldCheck,
-  Package, Info, Gift
+  Package, Info, Gift, Coffee
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Cart: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  const playBellSound = () => {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+
+      const playTone = (freq: number, startTime: number, duration: number, vol: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+        gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
+        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + startTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
+        osc.start(ctx.currentTime + startTime);
+        osc.stop(ctx.currentTime + startTime + duration);
+      };
+
+      playTone(1318.51, 0, 1.5, 0.15); // E6
+      playTone(1661.22, 0.1, 1.5, 0.15); // G#6
+      playTone(1975.53, 0.2, 2.0, 0.15); // B6
+    } catch (e) {
+      console.error("Audio playback failed", e);
+    }
+  };
+
+  const handleReturnToCatalog = () => {
+    playBellSound();
+    setTimeout(() => {
+      navigate('/');
+    }, 200);
+  };
 
   // Free shipping threshold
   const freeShippingThreshold = 50;
@@ -35,35 +71,6 @@ const Cart: React.FC = () => {
     }
   };
 
-  if (orderSuccess) {
-    return (
-      <div className="cart-empty-state">
-        <div className="success-lottie-container">
-          <CheckCircle size={100} className="success-icon pulse" />
-        </div>
-        <h2>¡Pedido Realizado con Éxito!</h2>
-        <p>Tu selección de café está siendo preparada por nuestros expertos baristas.</p>
-        <div className="success-actions">
-          <Link to="/orders" className="primary-btn glossy">Ver mis pedidos</Link>
-          <Link to="/" className="secondary-btn">Ir al catálogo</Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (cart.length === 0) {
-    return (
-      <div className="cart-empty-state">
-        <div className="empty-cart-visual">
-          <ShoppingBag size={120} strokeWidth={1} />
-        </div>
-        <h2>Tu carrito está vacío</h2>
-        <p>Parece que aún no has descubierto tu café favorito para hoy.</p>
-        <Link to="/" className="primary-btn glossy">Descubrir Productos</Link>
-      </div>
-    );
-  }
-
   return (
     <div className="cart-page-container fade-in">
       <div className="cart-header-section">
@@ -73,115 +80,147 @@ const Cart: React.FC = () => {
         <h1>Mi Selección <span className="item-count">({cart.length} productos)</span></h1>
       </div>
 
-      <div className="cart-layout">
-        <div className="main-cart-column">
-          <div className="shipping-promo-card">
-            <div className="shipping-info-text">
-              {amountToFreeShipping > 0 ? (
-                <p>Faltan <strong>${amountToFreeShipping.toFixed(2)}</strong> para <span>Envío Gratis</span></p>
-              ) : (
-                <p className="free-shipping-unlocked"><Truck size={18} /> ¡Envío gratuito desbloqueado!</p>
-              )}
-            </div>
-            <div className="progress-bar-bg">
-              <div className="progress-bar-fill" style={{ width: `${shippingProgress}%` }}></div>
-            </div>
+      {orderSuccess ? (
+        <div className="cart-empty-state">
+          <div className="success-lottie-container">
+            <CheckCircle size={100} className="success-icon pulse" />
           </div>
-
-          <div className="cart-items-wrapper">
-            {cart.map((item) => (
-              <div key={item.id} className="premium-cart-item">
-                <div className="item-image-box">
-                  <img src={item.image || '/coffee-placeholder.png'} alt={item.name} />
-                </div>
-                <div className="item-main-details">
-                  <div className="item-title-row">
-                    <h3>{item.name}</h3>
-                    <button className="icon-only-btn delete" onClick={() => removeFromCart(item.id)}>
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                  <p className="item-meta">Tueste Medio • 250g</p>
-                  <div className="item-bottom-row">
-                    <div className="quantity-luxury-selector">
-                      <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
-                        <Minus size={14} />
-                      </button>
-                      <span className="qty-val">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                        <Plus size={14} />
-                      </button>
-                    </div>
-                    <div className="item-price-display">
-                      <span className="unit-price">${item.price} c/u</span>
-                      <span className="total-item-price">${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+          <h2>¡Pedido Realizado con Éxito!</h2>
+          <p>Tu selección de café está siendo preparada por nuestros expertos baristas.</p>
+          <div className="success-actions">
+            <Link to="/orders" className="primary-btn glossy">Ver mis pedidos</Link>
+            <Link to="/" className="secondary-btn">Ir al catálogo</Link>
           </div>
         </div>
-
-        <div className="checkout-summary-column">
-          <div className="order-card sticky-summary">
-            <h3>Resumen del Pedido</h3>
-
-            <div className="summary-list">
-              <div className="summary-item">
-                <span className="label"><Package size={16} /> Subtotal</span>
-                <span className="value">${cartTotal.toFixed(2)}</span>
+      ) : cart.length === 0 ? (
+        <div className="cart-empty-state interactive-empty-cart">
+          <div className="cart-icon-wrapper">
+            <ShoppingBag size={140} strokeWidth={0.5} className="floating-bag" />
+            <div className="cart-shadow"></div>
+            
+            <div className="coffee-bean-particle bean-1"><Coffee size={24} /></div>
+            <div className="coffee-bean-particle bean-2"><Coffee size={18} /></div>
+            <div className="coffee-bean-particle bean-3"><Coffee size={20} /></div>
+          </div>
+          
+          <h2 className="empty-title">Tu carrito está vacío</h2>
+          <p className="empty-subtitle">Parece que aún no has descubierto tu café favorito para hoy. Explora nuestra selección de granos premium.</p>
+          
+          <button onClick={handleReturnToCatalog} className="primary-btn glossy return-catalog-btn">
+            <span>Descubrir Productos</span>
+          </button>
+        </div>
+      ) : (
+        <div className="cart-layout">
+          <div className="main-cart-column">
+            <div className="shipping-promo-card">
+              <div className="shipping-info-text">
+                {amountToFreeShipping > 0 ? (
+                  <p>Faltan <strong>${amountToFreeShipping.toFixed(2)}</strong> para <span>Envío Gratis</span></p>
+                ) : (
+                  <p className="free-shipping-unlocked"><Truck size={18} /> ¡Envío gratuito desbloqueado!</p>
+                )}
               </div>
-              <div className="summary-item">
-                <span className="label"><Truck size={16} /> Envío</span>
-                <span className="value free-text">{cartTotal >= freeShippingThreshold ? 'Gratis' : '$5.00'}</span>
-              </div>
-              <div className="summary-item discount">
-                <span className="label"><Gift size={16} /> Descuento</span>
-                <span className="value">-$0.00</span>
-              </div>
-            </div>
-
-            <div className="summary-total-luxury">
-              <span className="label">Total</span>
-              <div className="total-amount-box">
-                <span className="currency">USD</span>
-                <span className="amount">${(cartTotal + (cartTotal >= freeShippingThreshold ? 0 : 5)).toFixed(2)}</span>
-              </div>
-            </div>
-
-            <button
-              className="luxury-checkout-btn"
-              onClick={handleCheckout}
-              disabled={isProcessing}
-            >
-              {isProcessing ? (
-                <span className="loader"></span>
-              ) : (
-                <>
-                  <span>Realizar Pago Seguro</span>
-                  <PaymentIcon size={20} />
-                </>
-              )}
-            </button>
-
-            <div className="trust-badges">
-              <div className="badge">
-                <ShieldCheck size={16} />
-                <span>Garantía de Satisfacción</span>
-              </div>
-              <div className="badge">
-                <PaymentIcon size={16} />
-                <span>Encriptación SSL 256-bit</span>
+              <div className="progress-bar-bg">
+                <div className="progress-bar-fill" style={{ width: `${shippingProgress}%` }}></div>
               </div>
             </div>
 
-            <div className="promo-code-box">
-              <button className="promo-toggle">¿Tienes un código de descuento? <Info size={14} /></button>
+            <div className="cart-items-wrapper">
+              {cart.map((item) => (
+                <div key={item.id} className="premium-cart-item">
+                  <div className="item-image-box">
+                    <img src={item.image || '/coffee-placeholder.png'} alt={item.name} />
+                  </div>
+                  <div className="item-main-details">
+                    <div className="item-title-row">
+                      <h3>{item.name}</h3>
+                      <button className="icon-only-btn delete" onClick={() => removeFromCart(item.id)}>
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                    <p className="item-meta">Tueste Medio • 250g</p>
+                    <div className="item-bottom-row">
+                      <div className="quantity-luxury-selector">
+                        <button onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
+                          <Minus size={14} />
+                        </button>
+                        <span className="qty-val">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                          <Plus size={14} />
+                        </button>
+                      </div>
+                      <div className="item-price-display">
+                        <span className="unit-price">${item.price} c/u</span>
+                        <span className="total-item-price">${(item.price * item.quantity).toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="checkout-summary-column">
+            <div className="order-card sticky-summary">
+              <h3>Resumen del Pedido</h3>
+
+              <div className="summary-list">
+                <div className="summary-item">
+                  <span className="label"><Package size={16} /> Subtotal</span>
+                  <span className="value">${cartTotal.toFixed(2)}</span>
+                </div>
+                <div className="summary-item">
+                  <span className="label"><Truck size={16} /> Envío</span>
+                  <span className="value free-text">{cartTotal >= freeShippingThreshold ? 'Gratis' : '$5.00'}</span>
+                </div>
+                <div className="summary-item discount">
+                  <span className="label"><Gift size={16} /> Descuento</span>
+                  <span className="value">-$0.00</span>
+                </div>
+              </div>
+
+              <div className="summary-total-luxury">
+                <span className="label">Total</span>
+                <div className="total-amount-box">
+                  <span className="currency">USD</span>
+                  <span className="amount">${(cartTotal + (cartTotal >= freeShippingThreshold ? 0 : 5)).toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                className="luxury-checkout-btn"
+                onClick={handleCheckout}
+                disabled={isProcessing}
+              >
+                {isProcessing ? (
+                  <span className="loader"></span>
+                ) : (
+                  <>
+                    <span>Realizar Pago Seguro</span>
+                    <PaymentIcon size={20} />
+                  </>
+                )}
+              </button>
+
+              <div className="trust-badges">
+                <div className="badge">
+                  <ShieldCheck size={16} />
+                  <span>Garantía de Satisfacción</span>
+                </div>
+                <div className="badge">
+                  <PaymentIcon size={16} />
+                  <span>Encriptación SSL 256-bit</span>
+                </div>
+              </div>
+
+              <div className="promo-code-box">
+                <button className="promo-toggle">¿Tienes un código de descuento? <Info size={14} /></button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       <style>{`
                 .cart-page-container {
@@ -556,21 +595,149 @@ const Cart: React.FC = () => {
                 /* Empty & Success states */
                 .cart-empty-state {
                     text-align: center;
-                    padding: 100px 20px;
+                    padding: 80px 20px;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
+                    background: rgba(255, 255, 255, 0.02);
+                    border-radius: 30px;
+                    border: 1px dashed rgba(255, 255, 255, 0.1);
+                    margin-top: 40px;
+                }
+
+                .interactive-empty-cart {
+                    perspective: 1000px;
+                }
+
+                .cart-icon-wrapper {
+                    position: relative;
+                    margin-bottom: 40px;
+                    width: 200px;
+                    height: 200px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                }
+
+                .floating-bag {
+                    color: rgba(212, 163, 115, 0.8);
+                    animation: magicalFloat 4s ease-in-out infinite;
+                    z-index: 2;
+                    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+
+                .cart-icon-wrapper:hover .floating-bag {
+                    transform: scale(1.1) rotate(-5deg);
+                    color: #d4a373;
+                }
+
+                .cart-shadow {
+                    position: absolute;
+                    bottom: 10px;
+                    width: 80px;
+                    height: 10px;
+                    background: rgba(0, 0, 0, 0.4);
+                    border-radius: 50%;
+                    filter: blur(8px);
+                    animation: shadowPulse 4s ease-in-out infinite;
+                }
+
+                .coffee-bean-particle {
+                    position: absolute;
+                    color: #a67c52;
+                    opacity: 0;
+                    z-index: 1;
+                    transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+
+                .bean-1 { top: 40%; left: 30%; transform: rotate(0deg); }
+                .bean-2 { top: 30%; right: 25%; transform: rotate(45deg); }
+                .bean-3 { bottom: 30%; right: 35%; transform: rotate(-30deg); }
+
+                .cart-icon-wrapper:hover .bean-1 {
+                    opacity: 0.8;
+                    transform: translate(-60px, -40px) rotate(-45deg);
+                }
+                
+                .cart-icon-wrapper:hover .bean-2 {
+                    opacity: 0.6;
+                    transform: translate(60px, -50px) rotate(90deg);
+                }
+
+                .cart-icon-wrapper:hover .bean-3 {
+                    opacity: 0.7;
+                    transform: translate(50px, 40px) rotate(-80deg);
+                }
+
+                @keyframes magicalFloat {
+                    0%, 100% { transform: translateY(0) scale(1); }
+                    50% { transform: translateY(-20px) scale(1.02); }
+                }
+
+                @keyframes shadowPulse {
+                    0%, 100% { transform: scale(1); opacity: 0.5; }
+                    50% { transform: scale(0.6); opacity: 0.2; }
+                }
+
+                .empty-title {
+                    font-family: 'Playfair Display', serif;
+                    font-size: 2.5rem;
+                    background: linear-gradient(135deg, #fff 0%, #d4a373 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-bottom: 20px;
+                }
+                
+                .empty-subtitle {
+                    color: rgba(255, 255, 255, 0.6);
+                    max-width: 450px;
+                    margin: 0 auto 40px;
+                    line-height: 1.6;
+                    font-family: 'Outfit', sans-serif;
+                }
+
+                .return-catalog-btn {
+                    position: relative;
+                    overflow: hidden;
+                    border: none;
+                    cursor: pointer;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .return-catalog-btn::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 50%;
+                    height: 100%;
+                    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+                    transform: skewX(-25deg);
+                    animation: shine 3s infinite;
+                }
+
+                @keyframes shine {
+                    0% { left: -100%; }
+                    20% { left: 200%; }
+                    100% { left: 200%; }
+                }
+
+                .return-catalog-btn:hover {
+                    transform: translateY(-3px) scale(1.02);
+                    box-shadow: 0 15px 30px rgba(212, 163, 115, 0.3);
+                }
+                
+                .return-catalog-btn:active {
+                    transform: translateY(1px);
                 }
 
                 .empty-cart-visual {
                     margin-bottom: 30px;
                     color: rgba(255, 255, 255, 0.1);
-                    animation: float 4s ease-in-out infinite;
-                }
-
-                @keyframes float {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-20px); }
+                    animation: magicalFloat 4s ease-in-out infinite;
                 }
 
                 .cart-empty-state h2 {
