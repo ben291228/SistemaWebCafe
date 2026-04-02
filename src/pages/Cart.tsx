@@ -7,6 +7,7 @@ import {
   Package, Info, Gift, Coffee
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { playBellSound } from '../utils/sounds';
 
 const Cart: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal } = useCart();
@@ -14,33 +15,6 @@ const Cart: React.FC = () => {
   const [orderSuccess, setOrderSuccess] = useState(false);
   const navigate = useNavigate();
 
-  const playBellSound = () => {
-    try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContext) return;
-      const ctx = new AudioContext();
-
-      const playTone = (freq: number, startTime: number, duration: number, vol: number) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
-        gain.gain.setValueAtTime(0, ctx.currentTime + startTime);
-        gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + startTime + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
-        osc.start(ctx.currentTime + startTime);
-        osc.stop(ctx.currentTime + startTime + duration);
-      };
-
-      playTone(1318.51, 0, 1.5, 0.15); // E6
-      playTone(1661.22, 0.1, 1.5, 0.15); // G#6
-      playTone(1975.53, 0.2, 2.0, 0.15); // B6
-    } catch (e) {
-      console.error("Audio playback failed", e);
-    }
-  };
 
   const handleReturnToCatalog = () => {
     playBellSound();
@@ -268,8 +242,8 @@ const Cart: React.FC = () => {
 
                 .item-count {
                     font-size: 1.1rem;
-                    color: rgba(255, 255, 255, 0.4);
-                    font-weight: 400;
+                    color: rgba(255, 255, 255, 0.85);
+                    font-weight: 600;
                     font-family: 'Outfit', sans-serif;
                 }
 
@@ -422,9 +396,11 @@ const Cart: React.FC = () => {
                 }
 
                 .qty-val {
-                    font-weight: 600;
-                    min-width: 20px;
+                    font-weight: 800;
+                    min-width: 24px;
                     text-align: center;
+                    color: #ffffff;
+                    font-size: 1.1rem;
                 }
 
                 .item-price-display {
@@ -434,8 +410,9 @@ const Cart: React.FC = () => {
                 }
 
                 .unit-price {
-                    font-size: 0.8rem;
-                    color: rgba(255, 255, 255, 0.4);
+                    font-size: 0.9rem;
+                    color: rgba(255, 255, 255, 0.85);
+                    font-weight: 500;
                 }
 
                 .total-item-price {
@@ -489,8 +466,9 @@ const Cart: React.FC = () => {
                 .summary-item {
                     display: flex;
                     justify-content: space-between;
-                    color: rgba(255, 255, 255, 0.6);
-                    font-size: 1rem;
+                    color: rgba(255, 255, 255, 0.9);
+                    font-size: 1.05rem;
+                    font-weight: 500;
                 }
 
                 .summary-item .label {
@@ -530,8 +508,9 @@ const Cart: React.FC = () => {
                 }
 
                 .total-amount-box .currency {
-                    font-size: 0.9rem;
-                    color: rgba(255, 255, 255, 0.4);
+                    font-size: 1rem;
+                    color: rgba(255, 255, 255, 0.8);
+                    font-weight: 600;
                 }
 
                 .total-amount-box .amount {

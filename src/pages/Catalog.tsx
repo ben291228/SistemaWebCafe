@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { productService } from '../services/productService';
 import ProductCard from '../Components/ProductCard';
 import { Search, Coffee as CoffeeIcon } from 'lucide-react';
+import { playBellSound } from '../utils/sounds';
 
 interface Product {
     id: string;
@@ -40,6 +41,7 @@ const Catalog: React.FC = () => {
             }
         };
         fetchData();
+        playBellSound();
     }, []);
 
     const handleCategoryChange = async (slug: string | null) => {

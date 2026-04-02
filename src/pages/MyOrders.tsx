@@ -214,29 +214,30 @@ const MyOrders: React.FC = () => {
         }
 
         .order-label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
         }
 
         .order-id {
-            font-weight: 700;
+            font-weight: 800;
             font-family: 'Outfit', sans-serif;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.25rem;
         }
 
         .order-date-group {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.95rem;
-            background: rgba(255, 255, 255, 0.03);
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.08);
             padding: 8px 16px;
             border-radius: 30px;
+            font-weight: 500;
         }
 
         .order-status {
@@ -260,8 +261,8 @@ const MyOrders: React.FC = () => {
         }
 
         .order-total-label {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: 600;
@@ -269,7 +270,7 @@ const MyOrders: React.FC = () => {
 
         .order-total-amount {
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: #d4a373;
             font-family: 'Playfair Display', serif;
         }
@@ -318,10 +319,12 @@ const MyOrders: React.FC = () => {
         .preview-qty {
             color: #d4a373;
             font-weight: 800;
+            font-size: 1rem;
         }
 
         .preview-name {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
         }
 
         /* Empty State */
